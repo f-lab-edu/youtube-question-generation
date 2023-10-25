@@ -19,7 +19,7 @@ class Product(BaseModel):
     # default_factory : Product Class가 처음 만들어질 때 호출되는 함수를 uuid4로 하겠다. --> Product 클래스를 생성하면 uuid4를 만들어서 id에 저장한다.
     name : str
     price : float
-    result : list  # ----> 강의에서는 안넣어도 실행되었는데.. 왜 선언해야지만 실행이 될까....
+    result : List[str]  # ----> 강의에서는 안넣어도 실행되었는데.. 왜 선언해야지만 실행이 될까....
 
 class Order(BaseModel):
     id: UUID = Field(default_factory=uuid4)
@@ -46,7 +46,10 @@ class OrderUpdate(BaseModel):
 class InferenceImageProduct(Product):
     name : str = "inference_image_product"
     price : float = 100.0
-    result : Optional[List]
+    #result : Optional[List]
+
+class MessageResponse(BaseModel):
+    message: str
 
     
 orders = []
@@ -56,14 +59,14 @@ orders = []
 async def get_orders() -> List[Order]:
     return orders
 
+# ------------ BP 아님 !
 @app.get("/order/{order_id}", description='Order 정보를 가져옵니다.')
-async def get_order(order_id: UUID) -> Union[Order, dict]:  # Union으로 order나 dict이 들어올 수 있다 (명시적으로 알려주는 것)
+async def get_order(order_id: UUID) -> Union[Order, MessageResponse]:  # Union으로 order나 dict이 들어올 수 있다 (명시적으로 알려주는 것)
     # order_id를 기반으로 order를 가져온다.
     order = get_order_by_id(order_id = order_id)
     # 만약 get_order_by_id에서 아무런 데이터가 없다면? 빈 리스티가 나온다면?
     if not order:
-        return {"message" : "주문 정보를 찾을 수 없습니다."}
-
+        return MessageResponse(message="주문 정보를 찾을 수 없습니다.")
     return order
 
 def get_order_by_id(order_id:UUID) -> Optional[Order]: 
@@ -81,7 +84,7 @@ async def make_order(files:List[UploadFile] =File(...),
     # 반복적이고 공통적인 로직이 필요 할 때 사용할 수 있음
     # 모델을 Load, Config Load
     # async, Depends 검색해서 또 학습해보기 !!!!!!
-    products = []
+    products: List[str] = []
     for file in files:
         image_bytes = await file.read()
 
