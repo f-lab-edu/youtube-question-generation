@@ -28,7 +28,7 @@ class MyEfficientNet(nn.Module):
         return x
 
 
-def get_model(model_path: str = "/Users/hyerim/Desktop/workspace/app/mask_task/model.pth") -> MyEfficientNet:
+def get_model(model_path: str = "./app/mask_task/model.pth") -> MyEfficientNet:
     """Model을 가져옵니다"""
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = MyEfficientNet(num_classes=18).to(device)
@@ -58,7 +58,7 @@ def predict_from_image_byte(model: MyEfficientNet, image_bytes: bytes, config: D
     return config["classes"][y_hat.item()]
 
 
-def get_config(config_path: str = "/Users/hyerim/Desktop/workspace/app/mask_task/config.yaml"):
+def get_config(config_path: str = "./app/mask_task/config.yaml"):
     import yaml
 
     with open(config_path, "r") as f:

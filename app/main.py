@@ -46,7 +46,7 @@ class OrderUpdate(BaseModel):
 class InferenceImageProduct(Product):
     name : str = "inference_image_product"
     price : float = 100.0
-    #result : Optional[List]
+    result : Optional[List]
 
 class MessageResponse(BaseModel):
     message: str
