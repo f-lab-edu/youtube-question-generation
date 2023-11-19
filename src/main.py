@@ -63,7 +63,6 @@ async def chat(req: ChatRequest):
 # 비슷한 주제의 동영상 추천받기
 # 영상시청 후 ---> 영상 내용 summary. 
 # 해당 영상에 대한 질문 답변
-# gd
 
 if __name__ == "__main__":
     import uvicorn
