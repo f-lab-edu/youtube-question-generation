@@ -17,6 +17,7 @@ jobs:
       - name: Lint Code Base
         uses: github/super-linter@v5
         env:
+          LINTER_RULES_PATH: /
           PYTHON_BLACK_CONFIG_FILE: pyproject.toml
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_GITLEAKS: false
