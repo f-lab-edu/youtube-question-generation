@@ -6,6 +6,7 @@ import openai
 import yt_dlp as yt
 from fastapi import FastAPI
 from langchain.chains import RetrievalQA
+from langchain.chains.retrieval_qa.base import BaseRetrievalQA
 from langchain.chat_models import ChatOpenAI
 from langchain.docstore.document import Document
 from langchain.vectorstores import Chroma
@@ -43,7 +44,7 @@ class QuesRequest(BaseModel):
 @app.post("/youtube_key")
 def get_youtube_key(req: UrlRequest) -> str:
     # https://stackoverflow.com/questions/3452546/how-do-i-get-the-youtube-video-id-from-a-url
-    url_parts = re.split(r"(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)", req)
+    url_parts = re.split(r"(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)", req.urlink)
     url_value = url_parts[2].split(r"[^0-9a-z_\-]", 1)[0] if url_parts[2] is not None else url_parts[0]
     return url_value
 
@@ -76,10 +77,10 @@ def audio_to_text(req: UrlRequest) -> Chroma:
     return db
 
 
-def make_qa_chain(req: UrlRequest) -> RetrievalQA:
+def make_qa_chain(req: UrlRequest) -> BaseRetrievalQA:
     db = audio_to_text(req)
     llm = ChatOpenAI(
-        model_name="gpt-4",
+        model="gpt-3.5-turbo",
         temperature=0,
         api_key="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",
     )
@@ -91,7 +92,7 @@ def make_qa_chain(req: UrlRequest) -> RetrievalQA:
 
 
 @app.post("/chat")
-async def ask_question(req: UrlRequest, q: QuesRequest):
+async def ask_question(req: UrlRequest, q: QuesRequest) -> None:
     qa_chain = make_qa_chain(req)
     result = qa_chain({"query": q})
     print(f"Q: {result['query'].strip()}")

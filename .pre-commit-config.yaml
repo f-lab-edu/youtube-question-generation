@@ -17,3 +17,9 @@ repos:
     rev: 5.12.0
     hooks:
       - id: isort
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.7.1
+    hooks:
+      - id: mypy
+        verbose: true
+        entry: bash -c 'mypy "$@" || true' --
