@@ -19,6 +19,7 @@ jobs:
         env:
           LINTER_RULES_PATH: /
           PYTHON_BLACK_CONFIG_FILE: pyproject.toml
+          PYTHON_ISORT_CONFIG_FILE: pyproject.toml
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_GITLEAKS: false
           DEFAULT_BRANCH: "main"
