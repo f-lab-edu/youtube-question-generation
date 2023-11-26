@@ -23,3 +23,5 @@ repos:
       - id: mypy
         verbose: true
         entry: bash -c 'mypy "$@" || true' --
+    additional_dependencies:
+      - "pydantic==2.5.2"
