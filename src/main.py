@@ -1,49 +1,58 @@
+import math
+import re
+import time
+
 import openai
 import yt_dlp as yt
-import re, time, math
-from pytube import YouTube
 from fastapi import FastAPI
+from langchain.chains import RetrievalQA
+from langchain.chat_models import ChatOpenAI
+from langchain.docstore.document import Document
+from langchain.vectorstores import Chroma
 from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
 from emb import document_split
 from model import transcribe_file
-from langchain.vectorstores import Chroma
-from langchain.docstore.document import Document
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import RetrievalQA
-from pydantic_settings import BaseSettings, SettingsConfigDict
 
 app = FastAPI()
 
-AUDIO_FOLDER = './audio'
+AUDIO_FOLDER = "./audio"
+
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
     openai_api_key: str
 
+
 # Settings 클래스 인스턴스 생성
-settings = Settings(_env_file='.env', _env_file_encoding='utf-8')
+settings = Settings(_env_file=".env", _env_file_encoding="utf-8")
 openai.api_key = settings.openai_api_key
+
 
 class UrlRequest(BaseModel):
     # 사용자가 youtube link 입력함.
-    urlink: str 
+    urlink: str
+
 
 class QuesRequest(BaseModel):
     # 질의를 합니다.
     query: str
 
+
 @app.post("/youtube_key")
 def get_youtube_key(req: UrlRequest) -> str:
-    
     # https://stackoverflow.com/questions/3452546/how-do-i-get-the-youtube-video-id-from-a-url
-    url_parts = re.split(r'(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)', req)
-    url_value = url_parts[2].split(r'[^0-9a-z_\-]', 1)[0] if url_parts[2] is not None else url_parts[0]
+    url_parts = re.split(r"(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)", req)
+    url_value = url_parts[2].split(r"[^0-9a-z_\-]", 1)[0] if url_parts[2] is not None else url_parts[0]
     return url_value
 
+
 ydl_opts = {
-    'format': 'bestaudio/best',
-    'outtmpl': f'{AUDIO_FOLDER}/%(id)s.%(ext)s',
+    "format": "bestaudio/best",
+    "outtmpl": f"{AUDIO_FOLDER}/%(id)s.%(ext)s",
 }
+
 
 @app.post("/audioload")
 def get_youtube_audio(req: UrlRequest):
@@ -51,13 +60,14 @@ def get_youtube_audio(req: UrlRequest):
     with yt.YoutubeDL(ydl_opts) as ydl:
         ydl.download([req])
 
+
 def audio_to_text(req: UrlRequest) -> Chroma:
-    youtube_urlkey = get_youtube_key(req = req)
-    audio_filename = f'./{youtube_urlkey}.webm'
+    youtube_urlkey = get_youtube_key(req=req)
+    audio_filename = f"./{youtube_urlkey}.webm"
 
     start = time.perf_counter()
-    transcription = transcribe_file(audio_filename) 
-    runtime = time.perf_counter()-start
+    transcription = transcribe_file(audio_filename)
+    runtime = time.perf_counter() - start
     rounded_runtime = math.ceil(runtime)
     print("Runtime: ", rounded_runtime, " seconds")
 
@@ -65,14 +75,20 @@ def audio_to_text(req: UrlRequest) -> Chroma:
     db = document_split(texts)
     return db
 
+
 def make_qa_chain(req: UrlRequest) -> RetrievalQA:
     db = audio_to_text(req)
-    llm = ChatOpenAI(model_name="gpt-4", temperature=0, api_key="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")
+    llm = ChatOpenAI(
+        model_name="gpt-4",
+        temperature=0,
+        api_key="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",
+    )
     return RetrievalQA.from_chain_type(
         llm,
-        retriever=db.as_retriever(search_type="mmr", search_kwargs={'fetch_k': 3}),
-        return_source_documents=True
+        retriever=db.as_retriever(search_type="mmr", search_kwargs={"fetch_k": 3}),
+        return_source_documents=True,
     )
+
 
 @app.post("/chat")
 async def ask_question(req: UrlRequest, q: QuesRequest):
@@ -80,8 +96,10 @@ async def ask_question(req: UrlRequest, q: QuesRequest):
     result = qa_chain({"query": q})
     print(f"Q: {result['query'].strip()}")
     print(f"A: {result['result'].strip()}\n")
-    print('\n')
+    print("\n")
+
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

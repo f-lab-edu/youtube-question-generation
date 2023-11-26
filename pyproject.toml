@@ -1,0 +1,15 @@
+[tool.poetry]
+packages = [
+    { include = "youtube-question-generation", from = "src" },
+]
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+line_length = 120
+extra_standard_library = ["pytest"]
+
+[tool.mypy]
+ignore_missing_imports = true
