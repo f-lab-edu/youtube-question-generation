@@ -25,4 +25,4 @@ jobs:
           PYPI_TOKEN: $
         run: |
           poetry build
-          poetry publish --username $ --password $  
+          poetry publish --username $ --password $
