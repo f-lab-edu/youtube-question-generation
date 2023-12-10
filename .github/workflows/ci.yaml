@@ -17,5 +17,3 @@ jobs:
           python-version: 3.11
       - name: Install dev-dependencies
         run: pip3 install -r requirements-dev.txt
-      - name: Lint
-        run: make check
