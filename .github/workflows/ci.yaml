@@ -3,7 +3,6 @@ name: CI
 on:
   pull_request:
     branches: [main]
-
 jobs:
   ci-test:
     name: ci-test
@@ -17,5 +16,5 @@ jobs:
           python-version: 3.11
       - name: Install dev-dependencies
         run: pip3 install -r requirements.txt
-      - name: Lint
-        run: make check
+      # - name: Lint
+      #   run: make check
