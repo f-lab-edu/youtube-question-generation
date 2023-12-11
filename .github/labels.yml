@@ -41,4 +41,3 @@
 - name: "type: suggestion"
   description: "This issue/PR is about a suggestion."
   color: "513472"
-

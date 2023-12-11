@@ -1,7 +1,9 @@
 [tool.poetry]
-packages = [
-    { include = "youtube-question-generation", from = "src" },
-]
+name = "youtube-question-generation"
+version = "0.1.0"
+description = ""
+authors = []
+readme = "README.md"
 
 [tool.black]
 line-length = 120
@@ -16,3 +18,25 @@ plugins = [
   "pydantic.mypy"
 ]
 ignore_missing_imports = true
+
+[tool.poetry.dependencies]
+python = "^3.11"
+langchain = "^0.0.345"
+fastapi = "0.104.1"
+uvicorn = "0.24.0"
+python-dotenv = "1.0.0"
+youtube-transcript-api = "0.6.1"
+chromadb = "0.4.17"
+openai = "1.3.3"
+pydantic = "2.5.2"
+pydantic-settings = "2.1.0"
+black = "23.11.0"
+flake8 = "6.1.0"
+isort = "5.12.0"
+sentence-transformers = "^2.2.2"
+yt-dlp = "^2023.11.16"
+pytube = "^15.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
