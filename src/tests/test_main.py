@@ -1,5 +1,5 @@
 from typing import Any
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 from main import UrlRequest, get_youtube_audio, get_youtube_key
 
@@ -15,6 +15,7 @@ def test_get_youtube_key_with_kurzgesagt():
 
     # Then
     assert output == "cFslUSyfZPc"
+
 
 def test_get_youtube_short_key_with_kurzgesagt():
     # Given
@@ -41,6 +42,7 @@ def test_get_youtube_embed_key_with_kurzgesagt():
     # Then
     assert output == "cFslUSyfZPc"
 
+
 @patch("yt_dlp.YoutubeDL")
 def test_get_youtube_audio_should_run_ydl_download(mock_youtube_dl: Any):
     # Given
@@ -51,8 +53,10 @@ def test_get_youtube_audio_should_run_ydl_download(mock_youtube_dl: Any):
     get_youtube_audio(input_req)
 
     # Then
-    mock_youtube_dl.assert_called_once_with({
-        "format": "bestaudio/best",
-        "outtmpl": "./audio/%(id)s.%(ext)s",
-    })
+    mock_youtube_dl.assert_called_once_with(
+        {
+            "format": "bestaudio/best",
+            "outtmpl": "./audio/%(id)s.%(ext)s",
+        }
+    )
     mocked_download.assert_called_once_with([input_req])

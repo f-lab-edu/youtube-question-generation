@@ -14,4 +14,4 @@ sentence-transformers
 yt-dlp
 pytube
 pytest
-
+pre-commit
