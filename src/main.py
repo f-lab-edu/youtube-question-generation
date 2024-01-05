@@ -1,6 +1,4 @@
-import math
 import re
-import time
 
 import openai
 import yt_dlp as yt
@@ -13,10 +11,12 @@ from langchain.vectorstores import Chroma
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+import database
 from emb import document_split
 from model import transcribe_file
 
 app = FastAPI()
+database.Base.metadata.create_all(bind=database.engine)
 
 AUDIO_FOLDER = "./audio"
 
@@ -62,15 +62,18 @@ def get_youtube_audio(req: UrlRequest):
         ydl.download([req])
 
 
-def audio_to_text(req: UrlRequest) -> Chroma:
+def audio_to_text(req: UrlRequest, db: database.db_dependency) -> Chroma:
     youtube_urlkey = get_youtube_key(req=req)
     audio_filename = f"./{youtube_urlkey}.webm"
 
-    start = time.perf_counter()
+    # start = time.perf_counter()
     transcription = transcribe_file(audio_filename)
-    runtime = time.perf_counter() - start
-    rounded_runtime = math.ceil(runtime)
-    print("Runtime: ", rounded_runtime, " seconds")
+    db_content = database.User(transcription)
+    db.add(db_content)
+    db.commit()
+    # runtime = time.perf_counter() - start
+    # rounded_runtime = math.ceil(runtime)
+    # print("Runtime: ", rounded_runtime, " seconds")
 
     texts = [Document(page_content=transcription)]
     db = document_split(texts)
