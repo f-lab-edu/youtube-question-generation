@@ -16,7 +16,7 @@ from emb import document_split
 from model import transcribe_file
 
 app = FastAPI()
-database.Base.metadata.create_all(bind=database.engine)
+database.target_metadata.create_all(bind=database.engine)
 
 AUDIO_FOLDER = "./audio"
 

@@ -32,6 +32,7 @@ engine = create_engine(DB_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # 모델 기본 클래스 생성
 Base = declarative_base()
+target_metadata = Base.metadata
 
 
 # SQL 모델
