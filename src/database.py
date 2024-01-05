@@ -22,9 +22,12 @@ class RDSSettings(BaseSettings):
 # SQLAlchemy 엔진 설정
 settings = RDSSettings()
 # RDS MySQL에 연결하기 위한 URL 생성
-SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{settings.rds_user}:{settings.rds_password}@{settings.rds_host}:{settings.rds_port}/{settings.rds_db}"
+DB_URL = (
+    f"mysql+pymysql://{settings.rds_user}:{settings.rds_password}"
+    f"@{settings.rds_host}:{settings.rds_port}/{settings.rds_db}"
+)
 # SQLAlchemy 엔진 생성
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(DB_URL)
 # 세션 생성
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # 모델 기본 클래스 생성
