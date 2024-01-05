@@ -76,8 +76,8 @@ def audio_to_text(req: UrlRequest, db: database.db_dependency) -> Chroma:
     # print("Runtime: ", rounded_runtime, " seconds")
 
     texts = [Document(page_content=transcription)]
-    db = document_split(texts)
-    return db
+    db_content = document_split(texts)
+    return db_content
 
 
 def make_qa_chain(req: UrlRequest) -> BaseRetrievalQA:
