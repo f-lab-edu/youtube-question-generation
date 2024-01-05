@@ -95,8 +95,8 @@ def make_qa_chain(req: UrlRequest, db: database.db_dependency) -> BaseRetrievalQ
 
 
 @app.post("/chat")
-async def ask_question(req: UrlRequest, q: QuesRequest) -> None:
-    qa_chain = make_qa_chain(req)
+async def ask_question(req: UrlRequest, q: QuesRequest, db: database.db_dependency) -> None:
+    qa_chain = make_qa_chain(req, db)
     result = qa_chain({"query": q})
     print(f"Q: {result['query'].strip()}")
     print(f"A: {result['result'].strip()}\n")
