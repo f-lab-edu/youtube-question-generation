@@ -80,8 +80,8 @@ def audio_to_text(req: UrlRequest, db: database.db_dependency) -> Chroma:
     return db_content
 
 
-def make_qa_chain(req: UrlRequest) -> BaseRetrievalQA:
-    db = audio_to_text(req)
+def make_qa_chain(req: UrlRequest, db: database.db_dependency) -> BaseRetrievalQA:
+    vector_db = audio_to_text(req, db)
     llm = ChatOpenAI(
         model="gpt-3.5-turbo",
         temperature=0,
@@ -89,7 +89,7 @@ def make_qa_chain(req: UrlRequest) -> BaseRetrievalQA:
     )
     return RetrievalQA.from_chain_type(
         llm,
-        retriever=db.as_retriever(search_type="mmr", search_kwargs={"fetch_k": 3}),
+        retriever=vector_db.as_retriever(search_type="mmr", search_kwargs={"fetch_k": 3}),
         return_source_documents=True,
     )
 
