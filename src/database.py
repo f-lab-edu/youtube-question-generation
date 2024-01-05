@@ -5,6 +5,7 @@ from pydantic_settings import BaseSettings
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm.decl_api import DeclarativeMeta
 
 
 class RDSSettings(BaseSettings):
@@ -31,7 +32,7 @@ engine = create_engine(DB_URL)
 # 세션 생성
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # 모델 기본 클래스 생성
-Base = declarative_base()
+Base: DeclarativeMeta = declarative_base()
 target_metadata = Base.metadata
 
 
