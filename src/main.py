@@ -65,16 +65,10 @@ def get_youtube_audio(req: UrlRequest):
 def audio_to_text(req: UrlRequest, db: database.db_dependency) -> Chroma:
     youtube_urlkey = get_youtube_key(req=req)
     audio_filename = f"./{youtube_urlkey}.webm"
-
-    # start = time.perf_counter()
     transcription = transcribe_file(audio_filename)
     db_content = database.User(transcription)
     db.add(db_content)
     db.commit()
-    # runtime = time.perf_counter() - start
-    # rounded_runtime = math.ceil(runtime)
-    # print("Runtime: ", rounded_runtime, " seconds")
-
     texts = [Document(page_content=transcription)]
     db_content = document_split(texts)
     return db_content
