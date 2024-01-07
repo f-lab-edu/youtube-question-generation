@@ -1,6 +1,6 @@
 name: Python application test with pytest
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   test:

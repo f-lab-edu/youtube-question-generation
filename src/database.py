@@ -9,11 +9,11 @@ from sqlalchemy.orm.decl_api import DeclarativeMeta
 
 
 class RDSSettings(BaseSettings):
-    rds_host: str  # RDS 인스턴스의 호스트 주소
+    rds_host: str = "localhost"  # RDS 인스턴스의 호스트 주소
     rds_port: int = 3306  # MySQL의 기본 포트는 3306입니다. 다른 포트를 사용하는 경우 변경하세요.
-    rds_db: str  # RDS 데이터베이스 이름
-    rds_user: str  # RDS 사용자 이름
-    rds_password: str  # RDS 사용자 비밀번호
+    rds_db: str = "mysql"  # RDS 데이터베이스 이름
+    rds_user: str = "mysql"  # RDS 사용자 이름
+    rds_password: str = ""  # RDS 사용자 비밀번호
 
     class Config:
         env_file = ".env"  # 환경 변수를 로드할 파일
